@@ -21,6 +21,8 @@
 #ifndef __VERSION_H
 #define __VERSION_H
 
+#include <QString>
+
 /**
  * Generates version information.
  * @todo Would like to automate generation of version from external source

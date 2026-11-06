@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QMessageBox>
+#include <QUrl>
 #include <QtDebug>
 #include "wikiwidget.h"
 #include "finddialog.h"
@@ -109,7 +110,9 @@ void WikiWidget::load(const QString& path)
 {
 	qDebug() << "load" << path;
 	stack_->setCurrentWidget(view_);
-	view_->setSource(path);
+	
+	// Qt5 no longer converts a string to a URL implicitly.
+	view_->setSource(QUrl(path));
 }
 
 /**

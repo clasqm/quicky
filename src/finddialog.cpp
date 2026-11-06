@@ -45,7 +45,6 @@ void FindDialog::findNext()
 	if (text.isEmpty())
 		return;
 	
-	flags = 0;
 	if (backwardsCheck_->isChecked())
 		flags |= QTextDocument::FindBackward;
 	if (caseSensitiveCheck_->isChecked())

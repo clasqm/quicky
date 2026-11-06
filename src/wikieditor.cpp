@@ -67,7 +67,7 @@ void WikiEditor::load(const QString& path)
 	path_ = path;
 	
 	// Load the file's contents into the editor.
-	setText(file.readAll());
+	setText(QString::fromUtf8(file.readAll()));
 	
 	// Even though the buffer's contents have changed, the document was not
 	// modified (from a disk file point of view).

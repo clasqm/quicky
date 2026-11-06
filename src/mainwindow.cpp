@@ -18,19 +18,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ***************************************************************************/
 
+#include <QAction>
+#include <QActionGroup>
+#include <QApplication>
+#include <QCloseEvent>
+#include <QDir>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QFontDialog>
+#include <QInputDialog>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMenuBar>
-#include <QToolBar>
-#include <QStatusBar>
-#include <QAction>
-#include <QFileDialog>
-#include <QDir>
 #include <QMessageBox>
-#include <QFontDialog>
-#include <QCloseEvent>
-#include <QSettings>
 #include <QProcess>
-#include <QInputDialog>
+#include <QSettings>
+#include <QStatusBar>
+#include <QToolBar>
 #include <QtDebug>
 #include "mainwindow.h"
 #include "wikiwidget.h"
@@ -392,10 +396,21 @@ void MainWindow::openExternal(const QUrl& url)
 		return;
 	}
 	
-	// Launch the external application.
+	// Substitute the URL into the command line.
 	cmd = cmd.arg(url.toString());
 	qDebug() << cmd;
-	QProcess::startDetached(cmd);
+	
+	// Qt5 no longer splits the command line itself, so turn it into a
+	// program name and an argument list before launching it.
+	QStringList args = QProcess::splitCommand(cmd);
+	if (args.isEmpty())
+		return;
+	
+	const QString program = args.takeFirst();
+	if (!QProcess::startDetached(program, args)) {
+		QString msg = tr("Failed to execute '%1'").arg(program);
+		QMessageBox::warning(0, tr("External Link"), msg);
+	}
 }
 
 /**

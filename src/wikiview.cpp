@@ -106,7 +106,7 @@ void WikiView::loadStyleSheet(const QString& path)
 		return;
 	}
 	
-	styleSheet = file.readAll();
+	styleSheet = QString::fromUtf8(file.readAll());
 	qDebug() << styleSheet;
 	
 	// Set the style sheet.
@@ -198,7 +198,7 @@ void WikiView::setSource(const QUrl& url)
 	
 	// If the URL is a local file, store its absolute path.
 	if (url.scheme().isEmpty())
-		url_ = fi.absoluteFilePath();
+		url_ = QUrl(fi.absoluteFilePath());
 	else
 		url_ = url;
 	
