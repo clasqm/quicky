@@ -19,7 +19,34 @@
  ***************************************************************************/
 
 #include <QApplication>
+#include <QSettings>
+#ifdef __HAIKU__
+#include <FindDirectory.h>
+#include <Path.h>
+#endif
 #include "mainwindow.h"
+
+/**
+ * Points QSettings at Haiku's per-user settings directory, ~/config/settings.
+ * Left to itself, Qt would store settings in its own XDG location, ~/.config,
+ * which is not where a Haiku application is expected to keep them.
+ */
+static void initSettingsPath()
+{
+#ifdef __HAIKU__
+	BPath path;
+	
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &path, true) != B_OK)
+		return;
+	
+	// setPath() only affects the format it is given, while a default
+	// constructed QSettings object uses the native one, so make the ini
+	// format the default before overriding its location.
+	QSettings::setDefaultFormat(QSettings::IniFormat);
+	QSettings::setPath(QSettings::IniFormat, QSettings::UserScope,
+	                   QString::fromUtf8(path.Path()));
+#endif
+}
 
 int main(int argc, char** argv)
 {
@@ -27,6 +54,9 @@ int main(int argc, char** argv)
 	
 	QCoreApplication::setOrganizationName("elad_lahav@users.sourceforge.net");
 	QCoreApplication::setApplicationName("Quicky");
+	
+	// Do this before any QSettings object is created.
+	initSettingsPath();
 	
 	MainWindow mainWnd;
 	

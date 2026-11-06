@@ -59,7 +59,9 @@ set(QUICKY_FORMS
     src/finddialog.ui
     src/stylesheetdialog.ui)
 
-add_executable(quicky
+# The executable is named Quicky_qt5 so that it does not clash with the Qt 4
+# build of Quicky.
+add_executable(Quicky_qt5
     ${QUICKY_SOURCES}
     ${QUICKY_HEADERS}
     ${QUICKY_FORMS}
@@ -67,16 +69,21 @@ add_executable(quicky
 
 # uic emits #include <wikiview.h> / <wikieditor.h> for the custom widgets
 # used in wikiwidget.ui, so the source directory must be on the include path.
-target_include_directories(quicky PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(Quicky_qt5 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-target_link_libraries(quicky PRIVATE Qt5::Widgets)
+target_link_libraries(Quicky_qt5 PRIVATE Qt5::Widgets)
+
+# The Haiku section of main.cpp calls find_directory(), which lives in libbe.
+if(CMAKE_SYSTEM_NAME STREQUAL "Haiku")
+    target_link_libraries(Quicky_qt5 PRIVATE be)
+endif()
 
 # The original qmake project built with CONFIG += warn_all.
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(quicky PRIVATE -Wall)
+    target_compile_options(Quicky_qt5 PRIVATE -Wall)
 endif()
 
 # qDebug() calls are compiled out of anything but a debug build, which is
 # what the old qmake project did with QT_NO_DEBUG_OUTPUT.
-target_compile_definitions(quicky PRIVATE
+target_compile_definitions(Quicky_qt5 PRIVATE
     $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>)

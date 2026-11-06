@@ -12,7 +12,7 @@ which CMake runs automatically.
     cmake ..
     make
 
-The binary is written to `build/quicky`, and `make clean` removes the build
+The binary is written to `build/Quicky_qt5`, and `make clean` removes the build
 products. Pass `-DCMAKE_BUILD_TYPE=Debug` to keep the `qDebug()` tracing that
 release builds compile out.
 
@@ -23,6 +23,9 @@ release builds compile out.
   that pass a file path as a document URL construct the `QUrl` explicitly.
 * `QProcess::startDetached()` no longer splits a command line, so external
   link commands are split with `QProcess::splitCommand()` first.
+* On Haiku, settings are kept in `~/config/settings`, the directory returned
+  by `find_directory(B_USER_SETTINGS_DIRECTORY)`, instead of the `~/.config`
+  location Qt would use on its own.
 * The Wiki-to-HTML formatter still uses `QRegExp`, which is part of Qt 5 but
   was removed in Qt 6. A future Qt 6 port has to move it to
   `QRegularExpression`.
